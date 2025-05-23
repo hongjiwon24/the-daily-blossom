@@ -1,9 +1,7 @@
-
 <template>
   <div class="flower-card">
     <img :src="flower.image" :alt="flower.name_kr" />
-    <h3>{{ flower.name_kr }}</h3>
-    <p>{{ flower.meaning }}</p>
+    <p class="name">{{ flower.name_en }}</p>
   </div>
 </template>
 
@@ -15,16 +13,23 @@ defineProps({
 
 <style scoped>
 .flower-card {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 8px;
+  border: 1px solid #aaa;
+  padding: 0.5rem;
   text-align: center;
-  background: #fffdf8;
+  width: 280px;
+  background-color: #fdfcf7;
 }
+
 .flower-card img {
   width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
+  height: auto;
+  display: block;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+}
+
+.name {
+  font-size: 14px;
+  font-family: 'Noto Serif KR', serif;
 }
 </style>

@@ -1,10 +1,11 @@
+<!-- 오늘, 당신의 행운의 꽃은? -->
 <template>
   <section id="lucky-flower">
     <div class="lucky wrap flex-column">
       <h1>오늘, 당신의 행운의 꽃은?</h1>
       <p>꽃잎을 하나씩 떼어주세요</p>
 
-      <!-- 🌸 꽃잎과 결과를 묶는 중앙 zone -->
+      <!-- 꽃잎과 결과를 묶는 중앙 zone -->
       <div class="flower-zone">
         <div id="petal-flower" ref="flowerRef"></div>
 
@@ -31,7 +32,7 @@ import { flowers } from '@/data/flowers.js'
 const flowerRef = ref(null)
 const resultVisible = ref(false)
 const selected = ref({})
-const isBusy = ref(false) // 🌼 모든 클릭 동작 제어
+const isBusy = ref(false) // 모든 클릭 동작 제어
 const petalCount = 6
 
 function createPetals() {
@@ -95,11 +96,11 @@ function showResult() {
   selected.value = pick
   resultVisible.value = true
 
-  // ✅ 최소 2초간 다시 하기 버튼 비활성화
+  // 최소 2초간 다시 하기 버튼 비활성화
   isBusy.value = true
   setTimeout(() => {
     isBusy.value = false
-  }, 2000)
+  }, 1000)
 }
 
 
@@ -113,7 +114,7 @@ function onBeforeLeave() {
 }
 
 function handleFadeOutComplete() {
-  // ✅ 결과가 완전히 사라진 후만 재생성
+  // 결과가 완전히 사라진 후만 재생성
   selected.value = {}
   createPetals()
   isBusy.value = false // 다시 사용 가능 상태로 전환

@@ -1,5 +1,6 @@
 <script setup>
 import Header from './components/Header.vue'
+import Title from './components/Title.vue'
 import Footer from './components/Footer.vue'
 
 import './assets/styles/reset.css'   // 가장 먼저!
@@ -10,6 +11,7 @@ import './assets/styles/common.css'  // 자주 쓰는 클래스
 <template>
   <div id="app">
     <Header />
+    <Title />
     <router-view />
     <Footer />
   </div>
