@@ -4,19 +4,22 @@
       <h1>오늘, 당신의 행운의 꽃은?</h1>
       <p>꽃잎을 하나씩 떼어주세요</p>
 
-      <div id="petal-flower" ref="flowerRef"></div>
+      <!-- 🌸 꽃잎과 결과를 묶는 중앙 zone -->
+      <div class="flower-zone">
+        <div id="petal-flower" ref="flowerRef"></div>
 
-      <transition :name="withTransition ? 'fade' : ''" @after-leave="handleFadeOutComplete">
-        <div class="result-block" v-if="resultVisible">
-          <div class="result">
-            <img :src="selected.image" :alt="selected.name_kr" />
-            <p>{{ selected.name_kr }} - {{ selected.meaning }}</p>
+        <transition name="fade" @before-leave="onBeforeLeave" @after-leave="handleFadeOutComplete">
+          <div class="result-block" v-if="resultVisible">
+            <div class="result">
+              <img :src="selected.image" :alt="selected.name_kr" />
+              <p>{{ selected.name_kr }} - {{ selected.meaning }}</p>
+            </div>
+            <div class="retry-area">
+              <button id="retryBtn" @click="reset">다시 하기</button>
+            </div>
           </div>
-          <div class="retry-area">
-            <button id="retryBtn" @click="reset">다시 하기</button>
-          </div>
-        </div>
-      </transition>
+        </transition>
+      </div>
     </div>
   </section>
 </template>
@@ -28,8 +31,7 @@ import { flowers } from '@/data/flowers.js'
 const flowerRef = ref(null)
 const resultVisible = ref(false)
 const selected = ref({})
-const withTransition = ref(true)
-
+const isBusy = ref(false) // 🌼 모든 클릭 동작 제어
 const petalCount = 6
 
 function createPetals() {
@@ -61,6 +63,8 @@ function createPetals() {
 }
 
 function onPetalClick(e) {
+  if (isBusy.value) return
+
   const petal = e.target.closest('.petal-flower')
   if (petal && !petal.classList.contains('falling')) {
     petal.classList.add('falling')
@@ -75,12 +79,10 @@ function onPetalClick(e) {
           setTimeout(() => {
             center.remove()
             setTimeout(() => {
-              withTransition.value = true
               showResult()
             }, 800)
           }, 400)
         } else {
-          withTransition.value = true
           showResult()
         }
       }
@@ -92,22 +94,36 @@ function showResult() {
   const pick = flowers[Math.floor(Math.random() * flowers.length)]
   selected.value = pick
   resultVisible.value = true
+
+  // ✅ 최소 2초간 다시 하기 버튼 비활성화
+  isBusy.value = true
+  setTimeout(() => {
+    isBusy.value = false
+  }, 2000)
 }
 
+
 function reset() {
-  withTransition.value = false
+  if (isBusy.value) return // 🔒 2초 내 클릭 제한
   resultVisible.value = false
-  selected.value = {}
+}
+
+function onBeforeLeave() {
+  // 트랜지션 시작 (이미 busy 상태 유지 중)
 }
 
 function handleFadeOutComplete() {
+  // ✅ 결과가 완전히 사라진 후만 재생성
+  selected.value = {}
   createPetals()
+  isBusy.value = false // 다시 사용 가능 상태로 전환
 }
 
 onMounted(() => {
   createPetals()
 })
 </script>
+
 
 
 
@@ -125,18 +141,19 @@ onMounted(() => {
 .lucky {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  height: 100vh;
   position: relative;
 }
 
 #petal-flower {
-  position: relative;
+  position: absolute;
+  top: 35%;
+  left: 50%;
   width: 300px;
   height: 300px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  transform: translate(-50%, -50%);
 }
 
 .petal-flower {
@@ -188,7 +205,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-
 /* 다시하기 버튼 */
 .retry-area {
   position: static;
@@ -204,18 +220,16 @@ onMounted(() => {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
 #retryBtn:hover {
   background-color: #ff9800;
 }
 
-
 /* 꽃 추첨 결과 */
 .result-block {
   position: absolute;
-  top: 30%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -236,5 +250,12 @@ onMounted(() => {
   opacity: 0;
 }
 
+/* 🌸 꽃잎 + 결과 겹치는 zone */
+.flower-zone {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-top: 100px;
+}
 
 </style>
